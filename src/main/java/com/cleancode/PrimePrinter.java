@@ -1,69 +1,74 @@
 package com.cleancode;
 
 public class PrimePrinter {
+    static int P[] = new int[1001];
+    static int PAGENUMBER  = 1;
+    static int PAGEOFFSET  = 1;
+    static int M = 1;
+    static int K = 1;
+    static  boolean  JPRIME=true;
+    static int ORD = 2;
+    static int SQUARE  = 9;
+    static int N=2;
+    static int MULT[] = new int[31];
+    //선언 시에 초기화 해주기, 대체 가능한 변수는 선언하지 않기
     public static void main(String[] args) {
-        final int M = 1000;
-        final int RR = 50;
-        final int CC = 4;
-        final int ORDMAX = 30;
-        int P[] = new int[M+1];
-        int PAGENUMBER;
-        int PAGEOFFSET;
-        int ROWOFFSET;
-        int C;
-        int J;
-        int K;
-        boolean JPRIME;
-        int ORD;
-        int SQUARE;
-        int N=0;
-        int MULT[] = new int[ORDMAX+1];
-
-        J=1;
-        K=1;
         P[1] = 2;
-        ORD = 2;
-        SQUARE = 9;
+        whileKto1000();
+        paging();
 
-        while (K < M) {
-            do {
-                J += 2;
-                if( J == SQUARE) {
-                    ORD++;
-                    SQUARE=P[ORD]*P[ORD];
-                    MULT[ORD-1]=J;
-                }
-                N=2;
-                JPRIME=true;
-                while (N < ORD && JPRIME) {
-                    while (MULT[N]<J)
-                        MULT[N] += P[N] + P[N];
-                    if (MULT[N] == J)
-                        JPRIME=false;
-                    N++;
-                }
-            } while (!JPRIME);
-            K++;
-            P[K]=J;
-        }
-        PAGENUMBER = 1;
-        PAGEOFFSET = 1;
-        while (PAGEOFFSET <= M) {
-            System.out.print("The First ");
-            System.out.print(Integer.toString(M));
-            System.out.print(" Prime Numbers === Page ");
-            System.out.print(Integer.toString(PAGENUMBER));
-            System.out.println("\n");
-            for (ROWOFFSET=PAGEOFFSET; ROWOFFSET <= PAGEOFFSET+RR-1; ROWOFFSET++) {
-                for (C = 0; C <= CC - 1; C++)
-                    if (ROWOFFSET + C * RR <= M)
-                        System.out.printf("%10d", P[ROWOFFSET + C * RR]);
-                System.out.println();
-            }
-            System.out.println("\f");
+    }
+//페이지 부분을 메소드 추출하여 따로 분리했다.
+    private static void paging() {
+        while (PAGEOFFSET <= 1000) {
+            printPages();
             PAGENUMBER++;
-            PAGEOFFSET += RR*CC;
+            PAGEOFFSET += 50*4;
 
+        }
+    }
+//반복문을 작은 함수로 따로 추출해낸다.
+    private static void printPages() {
+        System.out.print("The First 1000  Prime Numbers === Page " + Integer.toString(PAGENUMBER));
+        System.out.println("\n");
+        for (int i =PAGEOFFSET; i <= PAGEOFFSET+50-1; i++) {
+            for (int j = 0; j <= 4 - 1; j++)
+                if (i + j * 50 <= 1000)
+                    System.out.printf("%10d", P[i + j* 50]);
+            System.out.println();
+        }
+        System.out.println("\f");
+    }
+
+    private static void whileKto1000() {
+        while (K < 1000) {
+            doWhile();
+            K++;
+            P[K]=M;
+        }
+    }
+
+    //반복문을 하나의 덩어리로 취급하여 해당 부분을 함수로 빼내기
+    private static void doWhile() {
+        do {
+            M += 2;
+            if( M == SQUARE) {
+                ORD++;
+                SQUARE=P[ORD]*P[ORD];
+                MULT[ORD-1]=M;
+            }
+            isJprime();
+        } while (!JPRIME);
+    }
+
+    //반복문 작은 함수로 빼내기
+    private static void isJprime() {
+        while (N < ORD && JPRIME) {
+            while (MULT[N]<M)
+                MULT[N] += P[N] + P[N];
+            if (MULT[N] == M)
+                JPRIME=false;
+            N++;
         }
     }
 }
