@@ -2,68 +2,91 @@ package com.cleancode;
 
 public class PrimePrinter {
     public static void main(String[] args) {
-        final int M = 1000;
-        final int RR = 50;
-        final int CC = 4;
-        final int ORDMAX = 30;
-        int P[] = new int[M+1];
-        int PAGENUMBER;
-        int PAGEOFFSET;
-        int ROWOFFSET;
-        int C;
-        int J;
-        int K;
-        boolean JPRIME;
-        int ORD;
-        int SQUARE;
-        int N=0;
-        int MULT[] = new int[ORDMAX+1];
+        final int MnumberOfPrimes = 1000,linesPerPage = 50,columns = 4,ORDMAX = 30;
+        int primes[] = new int[MnumberOfPrimes+1];
+        int pagenumber, pageoffset, rowoffset, column, candidate, primeIndex, ord, square;
+        boolean possiblyPrime;
+        int n=0;
+        int multiples[] = new int[ORDMAX+1];
+        candidate=1;
+        primeIndex=1;
+        primes[1] = 2;
+        ord = 2;
+        square = 9;
+        primeIndexCompareMnumberOfPrimes(MnumberOfPrimes, primes, candidate, primeIndex, ord, square, multiples);
+        pagenumber = 1;
+        pageoffset = 1;
+        whilepageoffsetMnumberOfPrimes(MnumberOfPrimes, linesPerPage, columns, primes, pagenumber, pageoffset);
+    }
 
-        J=1;
-        K=1;
-        P[1] = 2;
-        ORD = 2;
-        SQUARE = 9;
-
-        while (K < M) {
+    private static void primeIndexCompareMnumberOfPrimes(int MnumberOfPrimes, int[] primes, int candidate, int primeIndex, int ord, int square, int[] multiples) {
+        int n;
+        boolean possiblyPrime;
+        while (primeIndex < MnumberOfPrimes) {
             do {
-                J += 2;
-                if( J == SQUARE) {
-                    ORD++;
-                    SQUARE=P[ORD]*P[ORD];
-                    MULT[ORD-1]=J;
+                candidate += 2;
+                if( candidate == square) {
+                    ord++;
+                    square = primes[ord]* primes[ord];
+                    multiples[ord -1]= candidate;
                 }
-                N=2;
-                JPRIME=true;
-                while (N < ORD && JPRIME) {
-                    while (MULT[N]<J)
-                        MULT[N] += P[N] + P[N];
-                    if (MULT[N] == J)
-                        JPRIME=false;
-                    N++;
-                }
-            } while (!JPRIME);
-            K++;
-            P[K]=J;
+                n=2;
+                possiblyPrime=true;
+                possiblyPrime = isPossiblyPrime(primes, candidate, possiblyPrime, ord, n, multiples);
+            } while (!possiblyPrime);
+            primeIndex++;
+            primes[primeIndex]= candidate;
         }
-        PAGENUMBER = 1;
-        PAGEOFFSET = 1;
-        while (PAGEOFFSET <= M) {
-            System.out.print("The First ");
-            System.out.print(Integer.toString(M));
-            System.out.print(" Prime Numbers === Page ");
-            System.out.print(Integer.toString(PAGENUMBER));
-            System.out.println("\n");
-            for (ROWOFFSET=PAGEOFFSET; ROWOFFSET <= PAGEOFFSET+RR-1; ROWOFFSET++) {
-                for (C = 0; C <= CC - 1; C++)
-                    if (ROWOFFSET + C * RR <= M)
-                        System.out.printf("%10d", P[ROWOFFSET + C * RR]);
-                System.out.println();
-            }
+    }
+
+    private static boolean isPossiblyPrime(int[] primes, int candidate, boolean possiblyPrime, int ord, int n, int[] multiples) {
+        while (n < ord && possiblyPrime) {
+            multiplescomparecandidate(primes, candidate, n, multiples);
+            possiblyPrime = isPossiblyPrime(candidate, possiblyPrime, n, multiples);
+            n++;
+        }
+        return possiblyPrime;
+    }
+
+    private static void multiplescomparecandidate(int[] primes, int candidate, int n, int[] multiples) {
+        while (multiples[n]< candidate)
+            multiples[n] += primes[n] + primes[n];
+    }
+
+    private static boolean isPossiblyPrime(int candidate, boolean possiblyPrime, int n, int[] multiples) {
+        if (multiples[n] == candidate)
+            possiblyPrime =false;
+        return possiblyPrime;
+    }
+
+    private static void whilepageoffsetMnumberOfPrimes(int MnumberOfPrimes, int linesPerPage, int columns, int[] primes, int pagenumber, int pageoffset) {
+        while (pageoffset <= MnumberOfPrimes) {
+            System.out.print("The First "+Integer.toString(MnumberOfPrimes)+
+                    " Prime Numbers === Page "+Integer.toString(pagenumber)+"\n");
+            forRowoffset(MnumberOfPrimes, linesPerPage, columns, primes, pageoffset);
             System.out.println("\f");
-            PAGENUMBER++;
-            PAGEOFFSET += RR*CC;
+            pagenumber++;
+            pageoffset += linesPerPage * columns;
 
         }
+    }
+
+    private static void forRowoffset(int MnumberOfPrimes, int linesPerPage, int columns, int[] primes, int pageoffset) {
+        int rowoffset;
+        for (rowoffset= pageoffset; rowoffset <= pageoffset + linesPerPage -1; rowoffset++) {
+            forcolumn(MnumberOfPrimes, linesPerPage, columns, primes, rowoffset);
+            System.out.println();
+        }
+    }
+
+    private static void forcolumn(int MnumberOfPrimes, int linesPerPage, int columns, int[] primes, int rowoffset) {
+        int column;
+        for (column = 0; column <= columns - 1; column++)
+            rowoffsetcolumnlinesPerPageMnumberOfPrimes(MnumberOfPrimes, linesPerPage, primes, rowoffset, column);
+    }
+
+    private static void rowoffsetcolumnlinesPerPageMnumberOfPrimes(int MnumberOfPrimes, int linesPerPage, int[] primes, int rowoffset, int column) {
+        if (rowoffset + column * linesPerPage <= MnumberOfPrimes)
+            System.out.printf("%10d", primes[rowoffset + column * linesPerPage]);
     }
 }
